@@ -9,6 +9,8 @@ async function fetcher(url: string, options: RequestInit = {}) {
   };
 
   const response = await fetch(`${API_BASE}${url}`, { ...options, headers });
+  const contentType = response.headers.get('Content-Type') || '';
+  const isJson = contentType.includes('application/json');
   
   if (response.status === 401) {
     localStorage.removeItem('token');
@@ -16,11 +18,18 @@ async function fetcher(url: string, options: RequestInit = {}) {
   }
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Something went wrong');
+    const errorPayload = isJson ? await response.json() : await response.text();
+    const message = isJson
+      ? errorPayload?.error || errorPayload?.message || JSON.stringify(errorPayload)
+      : errorPayload;
+    throw new Error(message || 'Something went wrong');
   }
 
-  return response.json();
+  if (response.status === 204) {
+    return null;
+  }
+
+  return isJson ? response.json() : response.text();
 }
 
 export const api = {
