@@ -1,0 +1,6 @@
+{
+  "name": "ProTrack: Enterprise Management Assignment",
+  "description": "A professional full-stack project management platform showcasing authentication, RBAC, CRUD, and real-time analytics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["auth", "database", "analytics"]
+}
